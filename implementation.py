@@ -31,25 +31,33 @@ def least_squares_GD(y, tx, initial_w, max_iters, gamma):
 
 def compute_stoch_gradient(y, tx, weights):
     """Compute a stochastic gradient from just few examples n and their corresponding y_n labels."""
-    # ***************************************************
     error = y - tx.dot(weights)
     grad = -(1 / len(error)) * tx.T.dot(error)
-    return grad, e
+    return grad, error
 
 
 
 def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
     batch_size = 1
     """Stochastic gradient descent algorithm."""
-    # ***************************************************
-    # Define parameters to store w and loss
-    w = initial_w
+    weights = initial_w
     for n_iter in range(max_iters):
         for minibatch_y, minibatch_tx in batch_iter(y, tx, batch_size):
-            grad, e = compute_stoch_gradient(minibatch_y, minibatch_tx, w)
-            loss = compute_mse(e)
-            w = w - gamma * grad
-    return loss, w
+            grad, error = compute_stoch_gradient(minibatch_y, minibatch_tx, weights)
+            mse_loss = compute_mse(error)
+            weights = weights - gamma * grad
+    return weights, mse_loss
+
+def ridge_regression(y, tx, lambda_):
+    """implement ridge regression."""
+    part1 = 2*tx.shape[0]*lambda_*np.eye(tx.shape[1])
+
+    a = tx.T.dot(tx) + part1
+    b = tx.T.dot(y)
+    weights = np.linalg.solve(a,b)
+    error = y - tx.dot(weights)
+    mse_loss = compute_mse(error)
+    return weights, mse_loss
 
 
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
