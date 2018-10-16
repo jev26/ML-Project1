@@ -8,10 +8,10 @@ import random
 
 
 #TODO: documentation
-def data_cleaning(tX, damagedFeature, i):
+def data_cleaning(tX, i):
     #exclude values = -999
-    tX_index_wash1 = tX[:, damagedFeature[i]] != -999
-    tX_wash1 = tX[tX_index_wash1, damagedFeature[i]]
+    tX_index_wash1 = tX[:, i] != -999
+    tX_wash1 = tX[tX_index_wash1, i]
 
     #exclude value > 5*standard deviation
     tX_wash1_std = np.std(tX_wash1)
@@ -67,15 +67,9 @@ cor = np.zeros(nFeature)
 cor = np.zeros(nFeature)
 print(nSample)
 for iFeature in range(nFeature):
-    # discard -999
-    sel = tX[:, iFeature] != -999
-    tX_tmp = tX[sel, iFeature]
-    # print(tX_tmp.shape)
-    y_tmp = y[sel]
-    # print(y_tmp.shape)
 
-    # print(tX[:,iFeature])
-    # print(y)
+    tX_tmp, y_tmp = data_cleaning(tX, iFeature)
+
     tmp = np.corrcoef(tX_tmp,y_tmp)**2
     #print(tmp)
     cor[iFeature] = tmp[1][0]
@@ -92,7 +86,7 @@ orderedInd = sorted(range(nFeature), key=lambda k: -cor[k])
 damagedFeature0 = orderedInd
 for i in range(len(damagedFeature0)):
 
-    tX_tmp, y_tmp = data_cleaning(tX, damagedFeature0, i)
+    tX_tmp, y_tmp = data_cleaning(tX, damagedFeature0[i])
 
     maximum = max(tX_tmp)
     minimum = min(tX_tmp)
