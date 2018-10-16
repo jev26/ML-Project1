@@ -93,4 +93,14 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
 
 
 
+def build_poly(x, degree):
+    """polynomial basis functions for input data x, for j=0 up to j=degree."""
+    # ***************************************************
+    polynomial = np.ones((len(x),1))
+    # format de ones pour avoir une matrice et pas un array. concatenate veut une matrice
+    xpower = np.zeros((len(x),degree))
+    for i in range (1, degree+1) :
+        xpower[:,i-1] = np.power(x,i)
+    polynomial = np.concatenate((polynomial,xpower),axis=1)
+    return polynomial
 

@@ -83,11 +83,22 @@ for i in range(len(damagedFeature0)):
 
 
     bins = np.linspace(minimum, maximum, 80)
-    plt.figure(i)
-    plt.hist(data1, bins, alpha=0.5, label='x')
-    plt.hist(data2, bins, alpha=0.5, label='y')
-    plt.xlim(minimum,maximum)
-    plt.legend(loc='upper right')
-    plt.title('Feature n° ' + str(damagedFeature0[i]))
+    #plt.figure(i)
+    #plt.hist(data1, bins, alpha=0.5, label='x')
+    #plt.hist(data2, bins, alpha=0.5, label='y')
+    #plt.xlim(minimum,maximum)
+    #plt.legend(loc='upper right')
+    #plt.title('Feature n° ' + str(damagedFeature0[i]))
+    #plt.show()
+    lambda_ = np.linspace(-2,2,40)
+    degree = np.linspace(1,12,12)
+    mse_losses = np.zeros(degree.shape)
+    for j in range(degree.size):
+        poly_tX = build_poly(tX_tmp, degree[j].astype(int))
+        weights, mse_loss = ridge_regression(y_tmp, poly_tX, 0.5)
+        mse_losses[j] = mse_loss
+    plt.figure()
+    plt.plot(degree,mse_losses)
+    plt.title('mseLoss in function of Lambda')
     plt.show()
 
