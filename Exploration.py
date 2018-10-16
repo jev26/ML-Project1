@@ -2,29 +2,27 @@ from proj1_helpers import load_csv_data
 import matplotlib.pyplot as plt
 import numpy as np
 from implementation import *
+import seaborn as sns # for visualization (heatmap)
 
 import random
 
-
-
 #TODO: documentation
-def data_cleaning(tX, i):
+def data_cleaning(iFeatureData):
+
     #exclude values = -999
-    tX_index_wash1 = tX[:, i] != -999
-    tX_wash1 = tX[tX_index_wash1, i]
+    conserved_index_wash1 = iFeatureData != -999
+    tX_wash1 = iFeatureData[conserved_index_wash1]
 
     #exclude value > 5*standard deviation
     tX_wash1_std = np.std(tX_wash1)
-    tX_index_wash2 = (tX_wash1 <= tX_wash1_std * 5) & (-tX_wash1_std * 5 <= tX_wash1)
-    tX_tmp = tX_wash1[tX_index_wash2]
+    conserved_index_wash2 = (np.abs(tX_wash1) <= tX_wash1_std * 5)
 
+    tX_wash2 = tX_wash1[conserved_index_wash2]
 
-    y_tmp1 = y[tX_index_wash1]
-    y_tmp = y_tmp1[tX_index_wash2]
+    y_wash1 = y[conserved_index_wash1]
+    y_wash2 = y_wash1[conserved_index_wash2]
 
-    return tX_tmp, y_tmp
-
-
+    return tX_wash2, y_wash2
 
 
 data_path = 'data/train.csv'
@@ -45,8 +43,9 @@ print(data2.shape) # (85667, 30)
 
 print(data1[:,1].shape)
 """
-# count the number of -999 per feature
+
 """
+# count the number of -999 per feature
 for i in range(nFeature):
     tmp = sum(tX[:, i] == -999)
     print('Feature n° ' + str(i) + " " + str(tmp))
@@ -68,8 +67,9 @@ cor = np.zeros(nFeature)
 print(nSample)
 for iFeature in range(nFeature):
 
-    tX_tmp, y_tmp = data_cleaning(tX, iFeature)
+    tX_tmp, y_tmp = data_cleaning(tX[:, iFeature])
 
+    # correlation
     tmp = np.corrcoef(tX_tmp,y_tmp)**2
     #print(tmp)
     cor[iFeature] = tmp[1][0]
@@ -80,23 +80,19 @@ orderedInd = sorted(range(nFeature), key=lambda k: -cor[k])
 #print(orderedPower)
 #print(orderedInd)
 
-
 # for each feature, display the histogram with color = label (y)
-
 damagedFeature0 = orderedInd
-for i in range(len(damagedFeature0)):
+for i, iFeature in enumerate(damagedFeature0):
 
-    tX_tmp, y_tmp = data_cleaning(tX, damagedFeature0[i])
+    tX_tmp, y_tmp = data_cleaning(tX[:, iFeature])
 
     maximum = max(tX_tmp)
     minimum = min(tX_tmp)
 
     data1 = tX_tmp[y_tmp == -1]
-    data2 = tX_tmp[(y_tmp == 1)]
-
+    data2 = tX_tmp[y_tmp == 1]
 
     #plot the figure
-
     bins = np.linspace(minimum, maximum, 80)
     #plt.figure(i)
     #plt.hist(data1, bins, alpha=0.5, label='x')
@@ -105,15 +101,26 @@ for i in range(len(damagedFeature0)):
     #plt.legend(loc='upper right')
     #plt.title('Feature n° ' + str(damagedFeature0[i]))
     #plt.show()
-    lambda_ = np.linspace(-2,2,40)
+
+    lambda_ = np.linspace(-1,1,20)
     degree = np.linspace(1,12,12)
-    mse_losses = np.zeros(degree.shape)
-    for j in range(degree.size):
-        poly_tX = build_poly(tX_tmp, degree[j].astype(int))
-        weights, mse_loss = ridge_regression(y_tmp, poly_tX, 0.5)
-        mse_losses[j] = mse_loss
+
+    mse_losses = np.zeros([degree.shape[0],lambda_.shape[0]])
+
+    for i, degree_i in enumerate(degree):
+        #print(degree_i)
+        for j, lambda_i in enumerate(lambda_):
+            #print(lambda_i)
+            poly_tX = build_poly(tX_tmp, degree_i.astype(int))
+            weights, mse_loss = ridge_regression(y_tmp, poly_tX, lambda_i)
+            mse_losses[i,j] = mse_loss
+
     plt.figure()
-    plt.plot(degree,mse_losses)
-    plt.title('mseLoss in function of Lambda')
+    ax = sns.heatmap(mse_losses,annot=True, cmap="YlGnBu")
     plt.show()
+
+    #plt.figure()
+    #plt.plot(degree, mse_losses)
+    #plt.title('mseLoss in function of Lambda')
+    #plt.show()
 
