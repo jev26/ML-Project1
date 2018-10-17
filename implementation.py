@@ -6,12 +6,11 @@ def scale_linear_bycolumn(rawpoints, high=1.0, low=0.0):
     maxs = np.max(rawpoints, axis=0)
     tmp = maxs - mins
     return high - (((high - low) * (maxs - rawpoints)) / tmp)
+
 def compute_mse(error):
     return (1 / (2 * np.size(error))) * np.sum(error * error)
 
 def least_squares(y, tx):
-    # print(tx.shape)
-    # print(y.shape)
     b = np.transpose(tx) @ y
     a = np.transpose(tx) @ tx
     weights = np.linalg.solve(a, b)
@@ -59,9 +58,7 @@ def ridge_regression(y, tx, lambda_):
     a = tx.T.dot(tx) + part1
     b = tx.T.dot(y)
     weights = np.linalg.solve(a,b)
-    error = y - tx.dot(weights)
-    mse_loss = compute_mse(error)
-    return weights, mse_loss
+    return weights
 
 
 def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
@@ -88,9 +85,6 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
         end_index = min((batch_num + 1) * batch_size, data_size)
         if start_index != end_index:
             yield shuffled_y[start_index:end_index], shuffled_tx[start_index:end_index]
-
-
-
 
 
 def build_poly(x, degree):
