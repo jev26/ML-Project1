@@ -53,7 +53,7 @@ def least_squares_SGD(y, tx, initial_w, max_iters, gamma):
 
 def ridge_regression(y, tx, lambda_):
     """implement ridge regression."""
-    part1 = 2*tx.shape[0]*lambda_*np.eye(tx.shape[1])
+    part1 = 2 * tx.shape[0] * lambda_ * np.eye(tx.shape[1])
 
     a = tx.T.dot(tx) + part1
     b = tx.T.dot(y)
@@ -129,7 +129,7 @@ def cross_validation(y, x, k_indices, k, lambda_, degree):
     tx_te = build_poly(x_te, degree)
 
     # ridge regression: TODO
-    weights, mse = ridge_regression(y_tr, tx_tr, lambda_)
+    weights = ridge_regression(y_tr, tx_tr, lambda_)
 
     # calculate the loss for train and test data: TODO
     e_tr = y_tr - tx_tr.dot(weights)

@@ -1,4 +1,4 @@
-from proj1_helpers import load_csv_data # how to import all ? . ?
+from proj1_helpers import *
 import matplotlib.pyplot as plt
 import numpy as np
 from implementation import *
@@ -17,13 +17,13 @@ def data_cleaning(iFeatureTrain, y):
     tX_wash1_std = np.std(tX_wash1)
     conserved_index_wash2 = (np.abs(tX_wash1) <= tX_wash1_std * 5)
 
-    tX_wash2 = tX_wash1[conserved_index_wash2]
+    #tX_wash2 = tX_wash1[conserved_index_wash2]
 
     y_wash1 = y[conserved_index_wash1]
-    y_wash2 = y_wash1[conserved_index_wash2]
+    #y_wash2 = y_wash1[conserved_index_wash2]
 
-    return tX_wash2, y_wash2
-    #return tX_wash1, y_wash1
+    #return tX_wash2, y_wash2
+    return tX_wash1, y_wash1
 
 
 train_path = 'data/train.csv'
@@ -97,8 +97,8 @@ print(cleaned_data.shape)
 # for each feature, display the histogram with color = label (y)
 damagedFeature0 = orderedInd
 
-histogram = True
-lambdaStudy = False
+histogram = False
+lambdaStudy = True
 
 seed = 1
 k_fold = 4
@@ -152,7 +152,7 @@ for i, iFeature in enumerate(damagedFeature0):
 
                 # cross-validation
                 for k in range(k_fold):
-                    loss_tr, loss_te = cross_validation(y_tmp, tX_tmp, k_indices, k, lambda_, degree)
+                    loss_tr, loss_te = cross_validation(y_tmp, tX_tmp, k_indices, k, lambda_i, degree_i.astype(int))
                     rmse_tr_tmp.append(loss_tr)
                     rmse_te_tmp.append(loss_te)
 
@@ -165,26 +165,19 @@ for i, iFeature in enumerate(damagedFeature0):
 
         print(best_parameter)
 
-        # test set
+        # heatmap for test error (test set from CV)
+        diff_rmse_te = rmse_te - rmse_te.min()
+        plt.figure()
+        ax = sns.heatmap(diff_rmse_te, vmin=0,vmax=0.03, annot=True, xticklabels=lambda_label,yticklabels=degree_label, cmap="YlGnBu")
+        plt.show()
+
+        # on test set
         #tx_tr = build_poly(tX_tmp, best_parameter[1])
         #weights, mse = ridge_regression(y_tmp, tx_tr, best_parameter[2])
         #tx_te = build_poly(tX_te_tmp, best_parameter[1])
         #y_pred = predict_labels(weights, tx_te)
         #name = 'submission-1.csv'
         #create_csv_submission(ids, y_pred, name)
-
-        diff_rmse_tr = rmse_tr - rmse_tr.min()
-        #mse_losses_norm = (mse_losses - mse_losses.mean())/mse_losses.std()
-        #mse_losses_scal = (mse_losses - mse_losses.min()) / (mse_losses.max() - mse_losses.min())
-        plt.figure()
-        ax = sns.heatmap(diff_rmse_tr,vmin=0,vmax=0.03,annot=True,xticklabels=lambda_label, yticklabels=degree_label, cmap="YlGnBu")
-        plt.show()
-
-        diff_rmse_te = rmse_te - rmse_te.min()
-        plt.figure()
-        ax = sns.heatmap(diff_rmse_te, vmin=0,vmax=0.03, annot=True, xticklabels=lambda_label,yticklabels=degree_label, cmap="YlGnBu")
-        plt.show()
-
 
         #plt.figure()
         #plt.plot(degree, mse_losses)
