@@ -1,4 +1,4 @@
-from proj1_helpers import load_csv_data
+from proj1_helpers import load_csv_data # how to import all ? . ?
 import matplotlib.pyplot as plt
 import numpy as np
 from implementation import *
@@ -14,16 +14,16 @@ def data_cleaning(iFeatureTrain, y):
     tX_wash1 = iFeatureTrain[conserved_index_wash1]
 
     #exclude abs(value) > 5*standard deviation
-    #tX_wash1_std = np.std(tX_wash1)
-    #conserved_index_wash2 = (np.abs(tX_wash1) <= tX_wash1_std * 5)
+    tX_wash1_std = np.std(tX_wash1)
+    conserved_index_wash2 = (np.abs(tX_wash1) <= tX_wash1_std * 5)
 
-    #tX_wash2 = tX_wash1[conserved_index_wash2]
+    tX_wash2 = tX_wash1[conserved_index_wash2]
 
     y_wash1 = y[conserved_index_wash1]
-    #y_wash2 = y_wash1[conserved_index_wash2]
+    y_wash2 = y_wash1[conserved_index_wash2]
 
-    #return tX_wash2, y_wash2, tX_te_wash2, y_te_wash2
-    return tX_wash1, y_wash1
+    return tX_wash2, y_wash2
+    #return tX_wash1, y_wash1
 
 
 train_path = 'data/train.csv'
@@ -93,16 +93,26 @@ for iFeature in range(nFeature):
 
 print(cleaned_data.shape)
 
+
 # for each feature, display the histogram with color = label (y)
 damagedFeature0 = orderedInd
 
-histogram = False
+histogram = True
 lambdaStudy = False
+
+seed = 1
+k_fold = 4
+
+if histogram:
+    plt.figure() # for the histogram
 
 for i, iFeature in enumerate(damagedFeature0):
 
     tX_tmp, y_tmp = data_cleaning(tX[:, iFeature], y)
     tX_te_tmp, y_te_tmp = data_cleaning(tX_te[:, iFeature], y_te)
+
+    # split data in k fold
+    k_indices = build_k_indices(y_tmp, k_fold, seed)
 
     maximum = max(tX_tmp)
     minimum = min(tX_tmp)
@@ -113,57 +123,66 @@ for i, iFeature in enumerate(damagedFeature0):
     if histogram:
         # plot the figure
         bins = np.linspace(minimum, maximum, 80)
-        plt.figure(i)
+
+        plt.subplot(6,5,i+1)
         plt.hist(data1, bins, alpha=0.5, label='x')
         plt.hist(data2, bins, alpha=0.5, label='y')
         plt.xlim(minimum,maximum)
-        plt.legend(loc='upper right')
+        #plt.legend(loc='upper right')
         plt.title('Feature n° ' + str(damagedFeature0[i]))
-        plt.show()
+
 
     if lambdaStudy:
         lambda_ = np.logspace(-5,-2,20)
-        degree = np.linspace(1,20,10)
+        degree = np.linspace(1,10,10)
 
         degree_label = degree.astype(int)
         lambda_label = np.around(lambda_, 5)
 
-        rmse_losses_tr = np.zeros([degree.shape[0],lambda_.shape[0]])
-        rmse_losses_te = np.zeros([degree.shape[0], lambda_.shape[0]])
+        rmse_tr = np.zeros([degree.shape[0],lambda_.shape[0]])
+        rmse_te = np.zeros([degree.shape[0], lambda_.shape[0]])
 
         best_parameter = [999, 0, 0]
 
         for i, degree_i in enumerate(degree):
             for j, lambda_i in enumerate(lambda_):
 
-                # train set
-                poly_tX = build_poly(tX_tmp, degree_i.astype(int))
-                weights = ridge_regression(y_tmp, poly_tX, lambda_i)
-                error = y_tmp - poly_tX.dot(weights)
-                rmse_loss = np.sqrt(2 * compute_mse(error))
-                rmse_losses_tr[i,j] = rmse_loss
+                rmse_tr_tmp = []
+                rmse_te_tmp = []
 
-                if rmse_loss < best_parameter[0]:
-                    best_parameter = [rmse_loss, degree_i, lambda_i]
+                # cross-validation
+                for k in range(k_fold):
+                    loss_tr, loss_te = cross_validation(y_tmp, tX_tmp, k_indices, k, lambda_, degree)
+                    rmse_tr_tmp.append(loss_tr)
+                    rmse_te_tmp.append(loss_te)
 
-                # test set ?
-                poly_tX_te = build_poly(tX_te_tmp, degree_i.astype(int))
-                error = y_te_tmp - poly_tX.dot(weights)
-                rmse_loss = np.sqrt(2 * compute_mse(error))
-                rmse_losses_te[i, j] = rmse_loss
+                rmse_tr[i,j] = np.mean(rmse_tr_tmp)
+                tmp = np.mean(rmse_te_tmp)
+                rmse_te[i,j] = tmp
+
+                if tmp < best_parameter[0]:
+                    best_parameter = [tmp, degree_i, lambda_i]
 
         print(best_parameter)
 
-        diff_rmse_losses = rmse_losses_tr - rmse_losses_tr.min()
+        # test set
+        #tx_tr = build_poly(tX_tmp, best_parameter[1])
+        #weights, mse = ridge_regression(y_tmp, tx_tr, best_parameter[2])
+        #tx_te = build_poly(tX_te_tmp, best_parameter[1])
+        #y_pred = predict_labels(weights, tx_te)
+        #name = 'submission-1.csv'
+        #create_csv_submission(ids, y_pred, name)
+
+        diff_rmse_tr = rmse_tr - rmse_tr.min()
         #mse_losses_norm = (mse_losses - mse_losses.mean())/mse_losses.std()
         #mse_losses_scal = (mse_losses - mse_losses.min()) / (mse_losses.max() - mse_losses.min())
         plt.figure()
-        ax = sns.heatmap(diff_rmse_losses,vmin=0,vmax=0.03,annot=True,xticklabels=lambda_label, yticklabels=degree_label, cmap="YlGnBu")
+        ax = sns.heatmap(diff_rmse_tr,vmin=0,vmax=0.03,annot=True,xticklabels=lambda_label, yticklabels=degree_label, cmap="YlGnBu")
         plt.show()
 
-        diff_rmse_losses_te = rmse_losses_te - rmse_losses_te.min()
+        diff_rmse_te = rmse_te - rmse_te.min()
         plt.figure()
-        ax = sns.heatmap(diff_rmse_losses_te, vmin=0,vmax=0.03, annot=True, xticklabels=lambda_label,yticklabels=degree_label, cmap="YlGnBu")
+        ax = sns.heatmap(diff_rmse_te, vmin=0,vmax=0.03, annot=True, xticklabels=lambda_label,yticklabels=degree_label, cmap="YlGnBu")
         plt.show()
 
 
@@ -172,3 +191,6 @@ for i, iFeature in enumerate(damagedFeature0):
         #plt.title('mseLoss in function of Lambda')
         #plt.show()
 
+if histogram:
+    plt.savefig('histogram.png') # for the histogram
+    plt.show() # for the histogram
