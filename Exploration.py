@@ -7,19 +7,56 @@ import seaborn as sns # for visualization (heatmap)
 import random
 
 #TODO: documentation
+def plot_feature(tX,orderedInd,y):
+    for i in range(len(orderedInd)):
+        non_altered_tX_tmp,y_tmp_initial_feature = data_cleaning(tX[:,orderedInd[i+1]],y)
+        tX_tmp, y_tmp = data_cleaning((tX[:,orderedInd[i]]), y)
+        #tX_tmp = (np.log(tX_tmp - min(tX_tmp)+1))
+        tX_tmp = tX_tmp*non_altered_tX_tmp
+        maximum = max(tX_tmp)
+        minimum = min(tX_tmp)
+        data1 = tX_tmp[y_tmp == -1]
+        data2 = tX_tmp[y_tmp == 1]
+
+    # plot the figure
+        bins = np.linspace(minimum, maximum, 2000)
+
+        plt.hist(data1, bins, alpha=0.5, label='x')
+        plt.hist(data2, bins, alpha=0.5, label='y')
+        plt.xlim(minimum, maximum)
+        #plt.show()
+        tmp = np.corrcoef(tX_tmp, y_tmp) ** 2
+        non_altered_tmp = np.corrcoef(non_altered_tX_tmp,y_tmp)**2
+        cor = tmp[1][0]
+        non_altered_cor = non_altered_tmp[1][0]
+        print(cor)
+        print(non_altered_cor)
+
+        if cor > non_altered_cor:
+            print(orderedInd[i+1])
+            print(orderedInd[i])
+            print(True)
+
+
+
 def data_cleaning(iFeatureTrain, y):
 
     #exclude values = -999
-    conserved_index_wash1 = iFeatureTrain != -999
-    tX_wash1 = iFeatureTrain[conserved_index_wash1]
-
+    #conserved_index_wash1 = iFeatureTrain != -999
+    #tX_wash1 = iFeatureTrain[conserved_index_wash1]
+    index_wash1 = iFeatureTrain == -999
+    iFeatureTrain[index_wash1] = np.median(iFeatureTrain)
+    tX_wash1 = iFeatureTrain
     #exclude abs(value) > 5*standard deviation
     tX_wash1_std = np.std(tX_wash1)
-    conserved_index_wash2 = (np.abs(tX_wash1) <= tX_wash1_std * 5)
+    #conserved_index_wash2 = (np.abs(tX_wash1) <= tX_wash1_std * 5)
+    index_wash2 = (np.abs(tX_wash1) >= tX_wash1_std * 5)
 
     #tX_wash2 = tX_wash1[conserved_index_wash2]
+    tX_wash1[index_wash2] = np.median(iFeatureTrain)
 
-    y_wash1 = y[conserved_index_wash1]
+    #y_wash1 = y[conserved_index_wash1]
+    y_wash1= y
     #y_wash2 = y_wash1[conserved_index_wash2]
 
     #return tX_wash2, y_wash2
@@ -76,8 +113,12 @@ for iFeature in range(nFeature):
 
 orderedPower = -np.sort(-cor)
 orderedInd = sorted(range(nFeature), key=lambda k: -cor[k])
-#print(orderedPower)
-#print(orderedInd)
+
+
+# call of the function to find the best correlation
+print(orderedInd)
+print(plot_feature(tX,orderedInd,y))
+
 
 # code Arthur
 #for i in range(len(damagedFeature)):
