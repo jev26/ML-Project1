@@ -10,7 +10,8 @@ def build_poly(x, degree):
     return poly
 
 def polynomial_features(X, degree):
-
+    """polynomial feature function that create a new features matrix with all combinations
+    of features with degree less than or equal to the degree"""
     #get the number of samples and features from the X matrix
     nb_samples, nb_features = X.shape
 
