@@ -2,6 +2,13 @@ import numpy as np
 import itertools
 
 
+def build_poly(x, degree):
+    """polynomial basis functions for input data x, for j=0 up to j=degree."""
+    poly = np.ones((len(x), 1))  # create a vector with the x inputs
+    for deg in range(1, degree + 1):  # for each degree from 1 to the degree chosen(inclusive)
+        poly = np.c_[poly, np.power(x, deg)]  # concatenate!
+    return poly
+
 def polynomial_features(X, degree):
 
     #get the number of samples and features from the X matrix
