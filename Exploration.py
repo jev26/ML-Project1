@@ -62,11 +62,19 @@ def data_cleaning(iFeatureTrain, y):
     #return tX_wash2, y_wash2
     return tX_wash1, y_wash1
 
+# count the number of 'value' per feature
+def RatioCountValue(value,tX):
+    # value is typically -999 or 0
+    nSample, nFeature = tX.shape
+    for i in range(nFeature):
+        tmp = sum(tX[:, i] == value)
+        print('Feature n° ' + str(i) + " " + str(tmp))
+        print('Ratio ' + str(tmp/nSample))
 
 train_path = 'data/train.csv'
 test_path = 'data/test.csv'
 y, tX, ids = load_csv_data(train_path, sub_sample=False)
-y_te, tX_te, ids_te = load_csv_data(train_path, sub_sample=False)
+y_te, tX_te, ids_te = load_csv_data(test_path, sub_sample=False)
 
 # print(y.shape) => (250000,)
 # print(tX.shape) => (250000, 30) => 30 features
@@ -83,32 +91,44 @@ print(data1.shape) # (164333, 30)
 print(data2.shape) # (85667, 30)
 """
 
+## Durty imputation
+cleaned_data = tX
+print(cleaned_data.shape)
 
-"""
-# count the number of -999 per feature
-for i in range(nFeature):
-    tmp = sum(tX[:, i] == -999)
-    print('Feature n° ' + str(i) + " " + str(tmp))
-    print('Ratio ' + str(tmp/nSample))
+case = 'imputation'
 
-# count the number of 0 per feature
-for i in range(nFeature):
-    tmp = sum(tX[:, i] == 0)
-    print('Feature n° ' + str(i) + " " + str(tmp))
-    print('Ratio ' + str(tmp/nSample))
-"""
+if case == 'remove':
+    for iFeature in range(nFeature):
+        # remove 999 values
+        tmp_index = cleaned_data[:, iFeature] != -999
+        cleaned_data = cleaned_data[tmp_index, :]
+        y = y[tmp_index]
+
+    print(cleaned_data.shape)
+    tX = cleaned_data
+
+elif case == 'imputation':
+    for iFeature in range(nFeature):
+        # replace 999 values by the mean of the feature without considering the 999
+        tmp_index = cleaned_data[:, iFeature] != -999
+        tmp_vect = cleaned_data[tmp_index, iFeature]
+        tmp_mean = np.mean(tmp_vect)
+
+        tmp_index = cleaned_data[:, iFeature] == -999
+        cleaned_data[tmp_index, iFeature] = tmp_mean
+
+    tX = cleaned_data
+
 
 # feature ranking according to the correlation between feature and label
 damagedFeature = np.array([5, 12, 26, 27, 28, 23, 24, 25, 22, 29])
 cor = np.zeros(nFeature)
 
-## correlation when -999 are dropped
+# correlation
 cor = np.zeros(nFeature)
-
 for iFeature in range(nFeature):
     tX_tmp, y_tmp  = data_cleaning(tX[:, iFeature], y)
-    # correlation
-    tmp = np.corrcoef(tX_tmp,y_tmp)**2
+    tmp = np.corrcoef(tX_tmp,y_tmp)**2 # correlation
     cor[iFeature] = tmp[1][0]
 
 orderedPower = -np.sort(-cor)
@@ -116,41 +136,33 @@ orderedInd = sorted(range(nFeature), key=lambda k: -cor[k])
 
 
 # call of the function to find the best correlation
-print(orderedInd)
-print(plot_feature(tX,orderedInd,y))
+#print(orderedInd)
+#print(plot_feature(tX,orderedInd,y))
 
 
 # code Arthur
 #for i in range(len(damagedFeature)):
 #    orderedInd.remove(damagedFeature[i])
 
-## Build matrix with all features but with aberrant + missing observation removed
-cleaned_data = tX
-print(cleaned_data.shape)
-
-for iFeature in range(nFeature):
-    conserved_index_wash1 = cleaned_data[:, iFeature] != -999
-    cleaned_data = cleaned_data[conserved_index_wash1,:]
-
-print(cleaned_data.shape)
-
 
 # for each feature, display the histogram with color = label (y)
 damagedFeature0 = orderedInd
 
-histogram = False
-lambdaStudy = True
+histogram_sameFig = False # for each feature (on one figure), display the histogram with color = label (y)
+histogram_diffFig = True # for each feature, display the histogram with color = label (y)
+lambdaStudy = False # for each feature, display a heatmap showing the test error depending on lambda and degree
 
 seed = 1
 k_fold = 4
 
-if histogram:
+if histogram_sameFig:
     plt.figure() # for the histogram
 
 for i, iFeature in enumerate(damagedFeature0):
 
+    iFeature = 22
     tX_tmp, y_tmp = data_cleaning(tX[:, iFeature], y)
-    tX_te_tmp, y_te_tmp = data_cleaning(tX_te[:, iFeature], y_te)
+    #tX_te_tmp, y_te_tmp = data_cleaning(tX_te[:, iFeature], y_te)
 
     # split data in k fold
     k_indices = build_k_indices(y_tmp, k_fold, seed)
@@ -161,17 +173,23 @@ for i, iFeature in enumerate(damagedFeature0):
     data1 = tX_tmp[y_tmp == -1]
     data2 = tX_tmp[y_tmp == 1]
 
-    if histogram:
+    if histogram_sameFig or histogram_diffFig:
         # plot the figure
         bins = np.linspace(minimum, maximum, 80)
 
-        plt.subplot(6,5,i+1)
+        if histogram_sameFig:
+            plt.subplot(6,5,i+1)
+        elif histogram_diffFig:
+            plt.figure()
+
         plt.hist(data1, bins, alpha=0.5, label='x')
         plt.hist(data2, bins, alpha=0.5, label='y')
         plt.xlim(minimum,maximum)
-        #plt.legend(loc='upper right')
         plt.title('Feature n° ' + str(damagedFeature0[i]))
 
+        if histogram_diffFig:
+            plt.legend(loc='upper right')
+            plt.show()
 
     if lambdaStudy:
         lambda_ = np.logspace(-5,-2,20)
@@ -225,6 +243,10 @@ for i, iFeature in enumerate(damagedFeature0):
         #plt.title('mseLoss in function of Lambda')
         #plt.show()
 
-if histogram:
+if histogram_sameFig:
     plt.savefig('histogram.png') # for the histogram
     plt.show() # for the histogram
+
+
+
+
