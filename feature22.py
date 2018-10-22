@@ -3,32 +3,7 @@ from proj1_helpers import *
 import matplotlib.pyplot as plt
 import numpy as np
 from implementation import *
-import seaborn as sns # for visualization (heatmap)
-
-import random
-
-def data_cleaning(iFeatureTrain, y):
-
-    #exclude values = -999
-    conserved_index_wash1 = iFeatureTrain != -999
-    tX_wash1 = iFeatureTrain[conserved_index_wash1]
-    #index_wash1 = iFeatureTrain == -999
-    #iFeatureTrain[index_wash1] = np.median(iFeatureTrain)
-    #tX_wash1 = iFeatureTrain
-    #exclude abs(value) > 5*standard deviation
-    #tX_wash1_std = np.std(tX_wash1)
-    #conserved_index_wash2 = (np.abs(tX_wash1) <= tX_wash1_std * 5)
-    #index_wash2 = (np.abs(tX_wash1) >= tX_wash1_std * 5)
-
-    #tX_wash2 = tX_wash1[conserved_index_wash2]
-    #tX_wash1[index_wash2] = np.median(iFeatureTrain)
-
-    y_wash1 = y[conserved_index_wash1]
-    #y_wash1= y
-    #y_wash2 = y_wash1[conserved_index_wash2]
-
-    #return tX_wash2, y_wash2
-    return tX_wash1, y_wash1
+from Visualization import *
 
 train_path = 'data/train.csv'
 y, tX, ids = load_csv_data(train_path, sub_sample=False)
@@ -61,32 +36,10 @@ for feat22 in range(4):
 
     print(orderedInd)
 
-    for i, iFeature in enumerate(orderedInd):
+    allHistogram1Fig(orderedInd, tX_feat22, y_feat22)
 
-        #tX_tmp, y_tmp = data_cleaning(tX[:, iFeature], y)
-        #tX_te_tmp, y_te_tmp = data_cleaning(tX_te[:, iFeature], y_te)
-        tX_tmp, y_tmp2 = data_cleaning(tX_feat22[:, iFeature], y_tmp)
+    #oneHistogram(orderedInd, tX_feat22, y_feat22)
 
-        print(tX_tmp.shape)
-        print(y_tmp2.shape)
-
-        if tX_tmp.size != 0:
-
-            maximum = max(tX_tmp)
-            minimum = min(tX_tmp)
-
-            data1 = tX_tmp[y_tmp2 == -1]
-            data2 = tX_tmp[y_tmp2 == 1]
-
-            # plot the figure
-            bins = np.linspace(minimum, maximum, 80)
-
-            plt.figure()
-
-            plt.hist(data1, bins, alpha=0.5, label='x')
-            plt.hist(data2, bins, alpha=0.5, label='y')
-            plt.xlim(minimum,maximum)
-            plt.title('Feature n° ' + str(orderedInd[i]))
-
-            plt.legend(loc='upper right')
-            plt.show()
+    # lambda_ = np.logspace(-5,-2,20)
+    # degree = np.linspace(1,10,10)
+    # lambdaStudy(orderedInd, tX_feat22, y_feat22, lambda_, degree)
