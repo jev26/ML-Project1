@@ -9,10 +9,11 @@ import random
 #TODO: documentation
 def plot_feature(tX,orderedInd,y):
     for i in range(len(orderedInd)):
-        non_altered_tX_tmp,y_tmp_initial_feature = data_cleaning(tX[:,orderedInd[i+1]],y)
+        #data_cleaning(iFeatureTrain, y, NaN_removal=True, imputation=False, outlier_removal=False)
+        non_altered_tX_tmp,y_tmp_initial_feature = data_cleaning(tX[:,orderedInd[i]],y,False,True)
         tX_tmp, y_tmp = data_cleaning((tX[:,orderedInd[i]]), y)
         #tX_tmp = (np.log(tX_tmp - min(tX_tmp)+1))
-        tX_tmp = tX_tmp*non_altered_tX_tmp
+        tX_tmp = np.tanh(tX_tmp)*non_altered_tX_tmp
         maximum = max(tX_tmp)
         minimum = min(tX_tmp)
         data1 = tX_tmp[y_tmp == -1]

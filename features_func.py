@@ -34,3 +34,29 @@ def polynomial_features(X, degree):
         PF[:, a] = X[:, b].prod(1)
 
     return PF
+
+def log_feature(tX):
+    for i in range(np.size(tX),2):
+        tX[:,i] = np.log(tX[:,i] - min(tX[:,i]) + 1)
+    return tX
+
+def feature_log_feature(tX):
+    for i in range(np.size(tX),2):
+        tX = tX*log_feature(tX)
+    return tX
+
+def tanh_feature(tX):
+    tX = np.tanh(tX)
+    return tX
+
+def feature_tanh_feature(tX):
+    tX = tX*tanh_feature((tX))
+    return tX
+
+def cos_feature(tX):
+    tX = np.cos(tX)
+    return tX
+
+def feature_cos_feature(tX):
+    tX = tX*cos_feature(tX)
+    return tX
