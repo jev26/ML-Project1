@@ -114,7 +114,7 @@ def build_k_indices(y, k_fold, seed):
 def cross_validation(y, x, k_indices, k, lambda_, degree):
     """return the loss of ridge regression."""
 
-    # get k'th subgroup in test, others in train: TODO
+    # get k'th subgroup in test, others in train
     te_indice = k_indices[k]
     x_te = x[te_indice]
     y_te = y[te_indice]
@@ -124,14 +124,14 @@ def cross_validation(y, x, k_indices, k, lambda_, degree):
     x_tr = x[tr_indice]
     y_tr = y[tr_indice]
 
-    # form data with polynomial degree: TODO
+    # form data with polynomial degree
     tx_tr = build_poly(x_tr, degree)
     tx_te = build_poly(x_te, degree)
 
-    # ridge regression: TODO
+    # ridge regression
     weights = ridge_regression(y_tr, tx_tr, lambda_)
 
-    # calculate the loss for train and test data: TODO
+    # calculate the loss for train and test data
     e_tr = y_tr - tx_tr.dot(weights)
     loss_tr = np.sqrt(2 * compute_mse(e_tr))
 

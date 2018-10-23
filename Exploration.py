@@ -47,16 +47,13 @@ def RatioCountValue(value,tX):
         print('Ratio ' + str(tmp/nSample))
 
 train_path = 'data/train.csv'
-test_path = 'data/test.csv'
 y, tX, ids = load_csv_data(train_path, sub_sample=False)
-y_te, tX_te, ids_te = load_csv_data(test_path, sub_sample=False)
 
 # print(y.shape) => (250000,)
 # print(tX.shape) => (250000, 30) => 30 features
 # print(ids.shape) => (250000,)
 
 nSample, nFeature = tX.shape
-nSample_te, nFeature_te = tX_te.shape
 
 """
 data1 = tX[y == -1]

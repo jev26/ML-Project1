@@ -63,7 +63,7 @@ def lambdaStudy(damagedFeature0, tX, y, lambda_, degree): # for each feature, di
     seed = 1
     k_fold = 4
 
-    for i, iFeature in enumerate(damagedFeature0):
+    for _, iFeature in enumerate(damagedFeature0):
         tX_tmp, y_tmp = data_cleaning(tX[:, iFeature], y)
         # tX_te_tmp, y_te_tmp = data_cleaning(tX_te[:, iFeature], y_te)
 
@@ -74,9 +74,6 @@ def lambdaStudy(damagedFeature0, tX, y, lambda_, degree): # for each feature, di
 
         maximum = max(tX_tmp)
         minimum = min(tX_tmp)
-
-        #lambda_ = np.logspace(-5,-2,20)
-        #degree = np.linspace(1,10,10)
 
         degree_label = degree.astype(int)
         lambda_label = np.around(lambda_, 5)
@@ -111,5 +108,6 @@ def lambdaStudy(damagedFeature0, tX, y, lambda_, degree): # for each feature, di
         diff_rmse_te = rmse_te - rmse_te.min()
         plt.figure()
         ax = sns.heatmap(diff_rmse_te, vmin=0,vmax=0.03, annot=True, xticklabels=lambda_label,yticklabels=degree_label, cmap="YlGnBu")
+        plt.title('Feature n° ' + str(iFeature))
         plt.show()
 

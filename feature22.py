@@ -36,10 +36,10 @@ for feat22 in range(4):
 
     print(orderedInd)
 
-    allHistogram1Fig(orderedInd, tX_feat22, y_feat22)
+    #allHistogram1Fig(orderedInd, tX_feat22, y_feat22)
 
     #oneHistogram(orderedInd, tX_feat22, y_feat22)
 
-    # lambda_ = np.logspace(-5,-2,20)
-    # degree = np.linspace(1,10,10)
-    # lambdaStudy(orderedInd, tX_feat22, y_feat22, lambda_, degree)
+    lambda_ = np.logspace(-5,-2,20)
+    degree = np.linspace(1,10,10)
+    lambdaStudy(orderedInd, tX_feat22, y_feat22, lambda_, degree)
