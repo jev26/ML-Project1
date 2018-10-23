@@ -63,9 +63,11 @@ def feature_cos_feature(tX):
     tX = tX*cos_feature(tX)
     return tX
 
-def sin_feature(tX):
-    tX = np.sin(tX)
+def exp_one_over_feature(tX):
+    tX = np.exp(1/(tX-np.min(tX)+1))
     return tX
+
+
 
 
 def generate_features(tX,orderedInd,y):
@@ -81,7 +83,7 @@ def generate_features(tX,orderedInd,y):
     log_tX = log_feature(tX)
     tanh_tX = tanh_feature(tX)
     cos_tX = cos_feature(tX)
-    sin_tX = sin_feature(tX)
+    sin_tX = exp_one_over_feature(tX)
 
     tx_array = np.array([log_tX, tanh_tX, cos_tX, sin_tX])
 
