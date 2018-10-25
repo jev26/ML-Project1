@@ -60,6 +60,6 @@ def preprocessing(tX_feat22,y_feat22):
 
     print(tX_feat22.shape)
 
-    tX_feat22,y_feat22 = data_cleaning(tX_feat22, y_feat22, imputation = True, outlier_removal = True)
+    tX_feat22,y_feat22 = data_cleaning(tX_feat22, y_feat22, imputation = True, outlier_removal = False)
     return tX_feat22,y_feat22
 

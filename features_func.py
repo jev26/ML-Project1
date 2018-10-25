@@ -62,7 +62,7 @@ def sigmoid_feature(tX):
 
 
 
-def generate_features(tX):
+def generate_features(tX, degree):
     log_tX = log_feature(tX)
     tanh_tX = tanh_feature(tX)
     cos_tX = cos_feature(tX)
@@ -73,6 +73,6 @@ def generate_features(tX):
     for a in tx_array:
         new_tX = np.column_stack((new_tX, a))
 
-    tX_final = polynomial_features(new_tX, 1)
+    tX_final = polynomial_features(new_tX, degree)
 
     return tX_final
