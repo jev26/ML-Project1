@@ -62,16 +62,7 @@ def sigmoid_feature(tX):
 
 
 
-def generate_features(tX,orderedInd,y):
-    new_tX = np.empty([tX.shape[0], 1])
-    for i in range(len(orderedInd)):
-        tX_tmp, y_tmp = data_cleaning((tX[:,orderedInd[i]]), y, False, True)
-        if i == 0:
-            new_tX = tX_tmp
-        else:
-            print((new_tX.shape, tX_tmp.shape))
-            new_tX = np.column_stack((new_tX, tX_tmp))
-
+def generate_features(tX):
     log_tX = log_feature(tX)
     tanh_tX = tanh_feature(tX)
     cos_tX = cos_feature(tX)
@@ -82,7 +73,6 @@ def generate_features(tX,orderedInd,y):
     for a in tx_array:
         new_tX = np.column_stack((new_tX, a))
 
-
-    tX_final = polynomial_features(new_tX, 2)
+    tX_final = polynomial_features(new_tX, 1)
 
     return tX_final
