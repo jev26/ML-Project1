@@ -56,7 +56,7 @@ def cos_feature(tX):
     return tX
 
 def sigmoid_feature(tX):
-    tX = sigmoid((tX-np.min(tX)+1))
+    tX = sigmoid((tX-np.mean(tX,axis=0)))
     return tX
 
 
