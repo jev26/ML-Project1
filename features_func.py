@@ -71,9 +71,9 @@ def generate_features(tX,orderedInd,y):
     log_tX = log_feature(tX)
     tanh_tX = tanh_feature(tX)
     cos_tX = cos_feature(tX)
-    sin_tX = sigmoid_feature(tX)
+    sig_tX = sigmoid_feature(tX)
 
-    tx_array = np.array([log_tX, tanh_tX, cos_tX, sin_tX])
+    tx_array = np.array([log_tX, tanh_tX, cos_tX, sig_tX])
 
     for a in tx_array:
         new_tX = np.column_stack((new_tX, a))
