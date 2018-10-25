@@ -1,13 +1,19 @@
 import numpy as np
 import itertools
+from data_preproc import *
+from proj1_helpers import sigmoid
 
 
 def build_poly(x, degree):
     """polynomial basis functions for input data x, for j=0 up to j=degree."""
-    poly = np.ones((len(x), 1))  # create a vector with the x inputs
-    for deg in range(1, degree + 1):  # for each degree from 1 to the degree chosen(inclusive)
-        poly = np.c_[poly, np.power(x, deg)]  # concatenate!
-    return poly
+    # ***************************************************
+    polynomial = np.ones((len(x),1))
+    # format de ones pour avoir une matrice et pas un array. concatenate veut une matrice
+    xpower = np.zeros((len(x),degree))
+    for i in range (1, degree+1) :
+        xpower[:,i-1] = np.power(x,i)
+    polynomial = np.concatenate((polynomial,xpower),axis=1)
+    return polynomial
 
 def polynomial_features(X, degree):
     """polynomial feature function that create a new features matrix with all combinations
@@ -31,6 +37,52 @@ def polynomial_features(X, degree):
 
     #create the polynomial features by iterating and multipliying the columns
     for a, b in enumerate(combi):
+        print(b)
         PF[:, a] = X[:, b].prod(1)
 
     return PF
+
+def log_feature(tX):
+    for i in range(np.size(tX),2):
+        tX[:,i] = np.log(tX[:,i] - min(tX[:,i]) + 1)
+    return tX
+
+def tanh_feature(tX):
+    tX = np.tanh(tX)
+    return tX
+
+def cos_feature(tX):
+    tX = np.cos(tX)
+    return tX
+
+def sigmoid_feature(tX):
+    tX = sigmoid((tX-np.mean(tX,axis=0)))
+    return tX
+
+
+
+
+def generate_features(tX,orderedInd,y):
+    new_tX = np.empty([tX.shape[0], 1])
+    for i in range(len(orderedInd)):
+        tX_tmp, y_tmp = data_cleaning((tX[:,orderedInd[i]]), y, False, True)
+        if i == 0:
+            new_tX = tX_tmp
+        else:
+            print((new_tX.shape, tX_tmp.shape))
+            new_tX = np.column_stack((new_tX, tX_tmp))
+
+    log_tX = log_feature(tX)
+    tanh_tX = tanh_feature(tX)
+    cos_tX = cos_feature(tX)
+    sig_tX = sigmoid_feature(tX)
+
+    tx_array = np.array([log_tX, tanh_tX, cos_tX, sig_tX])
+
+    for a in tx_array:
+        new_tX = np.column_stack((new_tX, a))
+
+
+    tX_final = polynomial_features(new_tX, 2)
+
+    return tX_final

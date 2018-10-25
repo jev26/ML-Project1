@@ -7,6 +7,13 @@ def standardize(x):
     stdi = ctr / np.std(ctr, axis=0)
     return stdi
 
+
+def normalize(x, high=1.0, low=0.0):
+    mins = np.min(x, axis=0)
+    maxs = np.max(x, axis=0)
+    rng = maxs - mins
+    return high - (((high - low) * (maxs - x)) / rng)
+
 """
 def data_cleaning(iFeatureTrain, y, NaN_removal = True, imputation = False, outlier_removal = False):
 
