@@ -124,11 +124,6 @@ def cross_validation(y, x, k_indices, k, lambda_):
 
 ##other: TODO mettre de l'ordre
 
-def scale_linear_bycolumn(rawpoints, high=1.0, low=0.0):
-    mins = np.min(rawpoints, axis=0)
-    maxs = np.max(rawpoints, axis=0)
-    tmp = maxs - mins
-    return high - (((high - low) * (maxs - rawpoints)) / tmp)
 
 def compute_mse(error):
     return (1 / (2 * np.size(error))) * np.sum(error * error)

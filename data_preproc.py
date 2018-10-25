@@ -8,7 +8,7 @@ def standardize(x):
     return stdi
 
 
-def normalize(x, high=100.0, low=0.0):
+def normalize(x, high=1.0, low=0.0):
     mins = np.min(x, axis=0)
     maxs = np.max(x, axis=0)
     rng = maxs - mins
