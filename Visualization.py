@@ -10,7 +10,6 @@ def allHistogram1Fig(damagedFeature0, tX, y): # for each feature (on one figure)
     plt.figure()  # for the histogram
     for i, iFeature in enumerate(damagedFeature0):
         tX_tmp, y_tmp = data_cleaning(tX[:, iFeature], y)
-        # tX_te_tmp, y_te_tmp = data_cleaning(tX_te[:, iFeature], y_te)
 
         if tX_tmp.size != 0:
             maximum = max(tX_tmp)
@@ -36,8 +35,10 @@ def oneHistogram(damagedFeature0, tX, y): # for each feature, display the histog
     k_fold = 4
 
     for i, iFeature in enumerate(damagedFeature0):
-        tX_tmp, y_tmp = data_cleaning(tX[:, iFeature], y)
-        # tX_te_tmp, y_te_tmp = data_cleaning(tX_te[:, iFeature], y_te)
+        #tX_tmp, y_tmp = data_cleaning(tX[:, iFeature], y)
+        tX_tmp = tX[:, iFeature]
+        y_tmp = y
+
 
         if tX_tmp.size != 0:
 

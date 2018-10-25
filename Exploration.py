@@ -110,7 +110,7 @@ orderedInd = sorted(range(nFeature), key=lambda k: -cor[k])
 
 # call of the function to find the best correlation
 print(orderedInd)
-print(plot_feature(tX,orderedInd,y))
+#print(plot_feature(tX,orderedInd,y))
 
 
 # code Arthur
@@ -121,7 +121,7 @@ print(plot_feature(tX,orderedInd,y))
 
 #allHistogram1Fig(orderedInd, tX, y)
 
-#oneHistogram(orderedInd, tX, y)
+oneHistogram(orderedInd, tX, y)
 
 #lambda_ = np.logspace(-5,-2,20)
 #degree = np.linspace(1,10,10)

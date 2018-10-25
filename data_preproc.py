@@ -7,7 +7,7 @@ def standardize(x):
     stdi = ctr / np.std(ctr, axis=0)
     return stdi
 
-
+"""
 def data_cleaning(iFeatureTrain, y, NaN_removal = True, imputation = False, outlier_removal = False):
 
     tX_return = iFeatureTrain
@@ -34,28 +34,34 @@ def data_cleaning(iFeatureTrain, y, NaN_removal = True, imputation = False, outl
         y_return = y_return[conserved_index]
 
     return tX_return, y_return
-
 """
-def data_cleaning(iFeatureTrain, y): # fonction Arthur
 
-    #exclude values = -999
-    #conserved_index_wash1 = iFeatureTrain != -999
-    #tX_wash1 = iFeatureTrain[conserved_index_wash1]
-    index_wash1 = iFeatureTrain == -999
-    iFeatureTrain[index_wash1] = np.median(iFeatureTrain)
-    tX_wash1 = iFeatureTrain
-    #exclude abs(value) > 5*standard deviation
-    tX_wash1_std = np.std(tX_wash1)
-    #conserved_index_wash2 = (np.abs(tX_wash1) <= tX_wash1_std * 5)
-    index_wash2 = (np.abs(tX_wash1) >= tX_wash1_std * 5)
+def data_cleaning(tX, y, imputation = True, outlier_removal = True):
 
-    #tX_wash2 = tX_wash1[conserved_index_wash2]
-    tX_wash1[index_wash2] = np.median(iFeatureTrain)
+    tX_return = tX
+    y_return = y
 
-    #y_wash1 = y[conserved_index_wash1]
-    y_wash1= y
-    #y_wash2 = y_wash1[conserved_index_wash2]
+    nSample, nFeature = tX.shape
 
-    #return tX_wash2, y_wash2
-    return tX_wash1, y_wash1
-"""
+    for iFeature in range(nFeature):
+
+        iFeatureTrain = tX[:, iFeature]
+
+        index_for_mean = iFeatureTrain != -999
+        new_value = np.median(iFeatureTrain[index_for_mean])
+
+        if imputation:
+            index_to_replace = iFeatureTrain == -999
+            tX[index_to_replace, iFeature] = new_value
+            #tX_return[index_to_replace] = new_value
+
+        iFeatureTrain = tX[:, iFeature]
+
+        if outlier_removal: # exclude abs(value) > 5 * standard deviation
+            outlier_threshold = np.std(iFeatureTrain)
+            to_replace_index = (np.abs(iFeatureTrain) > 5 * outlier_threshold)
+
+            tX_return[to_replace_index, iFeature] = new_value
+
+    return tX_return, y_return
+
