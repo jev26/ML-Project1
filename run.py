@@ -37,7 +37,3 @@ for model_i in all_model:
 
 
 
-
-
-
-

@@ -1,7 +1,7 @@
 import numpy as np
 import itertools
 from data_preproc import *
-from proj1_helpers import sigmoid
+from personal_helpers import sigmoid
 
 
 def build_poly(x, degree):
