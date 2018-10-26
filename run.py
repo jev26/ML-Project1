@@ -34,10 +34,11 @@ for model_i in all_model:
     print(model_i['te_id'].shape)
 
     nSample, nFeature = model_i['tX_tr'].shape
-    oneHistogram(range(0, nFeature), model_i['tX_tr'], model_i['y_tr'])
+    #oneHistogram(range(0, nFeature), model_i['tX_tr'], model_i['y_tr'])
 
     print('start learning')
-    best_parameter = learning(model_i['tX_tr'], model_i['y_tr'])
+    best_parameter = learning(model_i['tX_tr'], model_i['y_tr']) #ou model_i['best_param']
+    model_i.update({'best_param': best_parameter})
     print('learning done')
     w,_ = ridge_regression(model_i['y_tr'], model_i['tX_tr'], best_parameter[2])
     print('ridge regression')
@@ -46,17 +47,10 @@ for model_i in all_model:
     ids_final = np.append(ids_final, model_i['te_id'])
     y_final = np.append(y_final, pred)
 
-#ids_final_clean = np.delete(ids_final,0)
-#y_final_clean = np.delete(y_final,0)
 print('creating submission')
 
 create_csv_submission(ids_final, y_final, "final_submission.csv")
 
-
-
-
-    #model_i['best_param'] = learning(model_i['tX_tr'], model_i['y_tr']) # training process
-
-
-
-
+# print best parameter for each model
+for model_i in all_model:
+    print(model_i['best_param'])
