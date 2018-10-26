@@ -23,7 +23,7 @@ def learning(tX, y):
         tX_feat22, y_feat22 = preprocessing(tX_feat22, y_feat22)
         nSample, nFeature = tX_feat22.shape
 
-        tX_feat22 = generate_features(tX_feat22, 2)
+        tX_feat22 = generate_features(tX_feat22, 1)
         print(tX_feat22.shape)
 
         lambda_ = np.logspace(-5, -2, 20)
@@ -45,7 +45,7 @@ def learning(tX, y):
 
                 # cross-validation
                 for k in range(k_fold):
-                    _, loss_te = cross_validation(y_feat22, tX_feat22, k_indices, k, lambda_i, degree_i.astype(int))
+                    _, loss_te = cross_validation(y_feat22, tX_feat22, k_indices, k, lambda_i)
                     rmse_te_tmp.append(loss_te)
 
                 tmp = np.mean(rmse_te_tmp)

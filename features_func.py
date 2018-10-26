@@ -71,8 +71,8 @@ def generate_features(tX, degree):
     tx_array = np.array([log_tX, tanh_tX, cos_tX, sig_tX])
 
     for a in tx_array:
-        new_tX = np.column_stack((new_tX, a))
+        tX = np.column_stack((tX, a))
 
-    tX_final = polynomial_features(new_tX, degree)
+    tX_final = polynomial_features(tX, degree)
 
     return tX_final
