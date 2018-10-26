@@ -24,6 +24,9 @@ model0, model1, model2 = preprocessing(complete_tX,complete_y,complete_ids)
 
 all_model = [model0, model1, model2]
 
+y_final = np.array(nSample_te)
+ids_final = np.array(nSample_te)
+
 for model_i in all_model:
     print(model_i['tX_tr'].shape)
     print(model_i['y_tr'].shape)
@@ -33,7 +36,24 @@ for model_i in all_model:
     nSample, nFeature = model_i['tX_tr'].shape
     oneHistogram(range(0, nFeature), model_i['tX_tr'], model_i['y_tr'])
 
+    print('start learning')
+    best_parameter = learning(model_i['tX_tr'], model_i['y_tr'])
+    print('learning done')
+    w,_ = ridge_regression(model_i['y_tr'], model_i['tX_tr'], best_parameter[2])
+    print('ridge regression')
+
+    pred = predict_labels(w, model_i['tX_te'])
+    ids_final = np.append(ids_final, model_i['te_id'])
+    y_final = np.append(y_final, pred) #TODO
+    print(y_final.shape)
+
+create_csv_submission(ids_final, y_final, "final_submission.csv")
+
+
+
+
     #model_i['best_param'] = learning(model_i['tX_tr'], model_i['y_tr']) # training process
+
 
 
 

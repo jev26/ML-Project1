@@ -51,9 +51,6 @@ def tanh_feature(tX):
     tX = np.tanh(tX)
     return tX
 
-def cos_feature(tX):
-    tX = np.cos(tX)
-    return tX
 
 def sigmoid_feature(tX):
     tX = sigmoid((tX-np.mean(tX,axis=0)))
@@ -65,10 +62,9 @@ def sigmoid_feature(tX):
 def generate_features(tX, degree):
     log_tX = log_feature(tX)
     tanh_tX = tanh_feature(tX)
-    cos_tX = cos_feature(tX)
     sig_tX = sigmoid_feature(tX)
 
-    tx_array = np.array([log_tX, tanh_tX, cos_tX, sig_tX])
+    tx_array = np.array([log_tX, tanh_tX, sig_tX])
 
     for a in tx_array:
         tX = np.column_stack((tX, a))
