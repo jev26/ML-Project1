@@ -11,8 +11,8 @@ def learning(tX, y):
     tX_newfeat = generate_features(tX, 1)
     print(tX_newfeat.shape)
 
-    lambda_ = np.logspace(-5, -2, 20)
-    degree = np.linspace(1, 10, 10)
+    lambda_ = np.logspace(-5, -2, 20) #TODO set?
+    degree = np.linspace(1, 10, 10) #TODO remove
 
     seed = 1
     k_fold = 4
@@ -22,7 +22,7 @@ def learning(tX, y):
 
     best_parameter = [999, 0, 0]
 
-    for i, degree_i in enumerate(degree):
+    for i, degree_i in enumerate(degree): #TODO remove
         for j, lambda_i in enumerate(lambda_):
 
             #rmse_tr_tmp = []

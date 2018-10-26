@@ -44,10 +44,13 @@ for model_i in all_model:
 
     pred = predict_labels(w, model_i['tX_te'])
     ids_final = np.append(ids_final, model_i['te_id'])
-    y_final = np.append(y_final, pred) #TODO
-    print(y_final.shape)
+    y_final = np.append(y_final, pred)
 
-create_csv_submission(ids_final, y_final, "final_submission.csv")
+ids_final_clean = np.delete(ids_final,0)
+y_final_clean = np.delete(y_final,0)
+print('creating submission')
+
+create_csv_submission(ids_final_clean, y_final_clean, "final_submission.csv")
 
 
 
