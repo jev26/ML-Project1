@@ -8,57 +8,35 @@ from features_func import generate_features
 
 def learning(tX, y):
 
-    for Nbrjet in range(3):
+    tX_newfeat = generate_features(tX, 1)
+    print(tX_newfeat.shape)
 
-        print(Nbrjet)
+    lambda_ = np.logspace(-5, -2, 20)
+    degree = np.linspace(1, 10, 10)
 
-        if Nbrjet == 2:
-            tX_feat22 = tX[tX[:,22] > 1]
-            y_feat22 = y[tX[:,22] > 1]
+    seed = 1
+    k_fold = 4
 
-        else:
-            tX_feat22 = tX[tX[:,22] == Nbrjet]
-            y_feat22 = y[tX[:,22] == Nbrjet]
+    # split data in k fold
+    k_indices = build_k_indices(y, k_fold, seed)
 
-        tX_feat22, y_feat22 = preprocessing(tX_feat22, y_feat22)
-        nSample, nFeature = tX_feat22.shape
+    best_parameter = [999, 0, 0]
 
-        tX_feat22 = generate_features(tX_feat22, 1)
-        print(tX_feat22.shape)
+    for i, degree_i in enumerate(degree):
+        for j, lambda_i in enumerate(lambda_):
 
-        lambda_ = np.logspace(-5, -2, 20)
-        degree = np.linspace(1, 10, 10)
+            #rmse_tr_tmp = []
+            rmse_te_tmp = []
 
-        seed = 1
-        k_fold = 4
+            # cross-validation
+            for k in range(k_fold):
+                _, loss_te = cross_validation(y, tX_newfeat, k_indices, k, lambda_i)
+                rmse_te_tmp.append(loss_te)
 
-        # split data in k fold
-        k_indices = build_k_indices(y_feat22, k_fold, seed)
+            tmp = np.mean(rmse_te_tmp)
 
-        best_parameter = [999, 0, 0]
+            if tmp < best_parameter[0]:
+                best_parameter = [tmp, degree_i, lambda_i]
 
-        for i, degree_i in enumerate(degree):
-            for j, lambda_i in enumerate(lambda_):
-
-                #rmse_tr_tmp = []
-                rmse_te_tmp = []
-
-                # cross-validation
-                for k in range(k_fold):
-                    _, loss_te = cross_validation(y_feat22, tX_feat22, k_indices, k, lambda_i)
-                    rmse_te_tmp.append(loss_te)
-
-                tmp = np.mean(rmse_te_tmp)
-
-                if tmp < best_parameter[0]:
-                    best_parameter = [tmp, degree_i, lambda_i]
-
-        if Nbrjet == 0:
-            model_0 = best_parameter
-        elif Nbrjet == 1:
-            model_1 = best_parameter
-        else:
-            model_2 = best_parameter
-
-    return model_0, model_1, model_2
+    return best_parameter
 
