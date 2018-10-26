@@ -20,5 +20,7 @@ whole_tX = np.vstack((tX,tX_te))
 model_0, model_1, model_2 = learning(tX, y)
 
 
+
+
 #oneHistogram(range(0, nFeature), tX_feat22, y_feat22)
 
