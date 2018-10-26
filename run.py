@@ -24,8 +24,8 @@ model0, model1, model2 = preprocessing(complete_tX,complete_y,complete_ids)
 
 all_model = [model0, model1, model2]
 
-y_final = np.array(nSample_te)
-ids_final = np.array(nSample_te)
+y_final = []
+ids_final = []
 
 for model_i in all_model:
     print(model_i['tX_tr'].shape)
@@ -46,11 +46,11 @@ for model_i in all_model:
     ids_final = np.append(ids_final, model_i['te_id'])
     y_final = np.append(y_final, pred)
 
-ids_final_clean = np.delete(ids_final,0)
-y_final_clean = np.delete(y_final,0)
+#ids_final_clean = np.delete(ids_final,0)
+#y_final_clean = np.delete(y_final,0)
 print('creating submission')
 
-create_csv_submission(ids_final_clean, y_final_clean, "final_submission.csv")
+create_csv_submission(ids_final, y_final, "final_submission.csv")
 
 
 
