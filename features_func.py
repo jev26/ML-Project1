@@ -44,7 +44,7 @@ def polynomial_features(X, degree):
     return PF
 
 def log_feature(tX):
-    for i in range(np.size(tX),2):
+    for i in range(tX.shape[1]):
         tX[:,i] = np.log(tX[:,i] - min(tX[:,i]) + 1)
     return tX
 
@@ -61,12 +61,22 @@ def sigmoid_feature(tX):
 
 
 def generate_features(tX, degree):
+
+    tX = tX[:, np.apply_along_axis(np.count_nonzero, 0, tX) > 0] #remove features containing only 0
     log_tX = log_feature(tX)
     tanh_tX = tanh_feature(tX)
     sig_tX = sigmoid_feature(tX)
 
-    tX = np.hstack([tX, log_tX, tanh_tX, sig_tX])
+    print(tX)
+    print(log_tX)
+
+    tX = normalize(np.hstack([tX, log_tX, tanh_tX, sig_tX]))
     print('shape generated features')
     print(tX.shape)
 
-    return polynomial_features(tX, degree)
+    tX_final = polynomial_features(tX, degree)
+
+    print('txfinal')
+    print(tX_final)
+
+    return tX_final
