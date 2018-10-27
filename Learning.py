@@ -5,7 +5,7 @@ def learning(tX, y, degree, lambda_):
     losses_te = []
     losses_tr = []
     tX_newfeat = generate_features(tX, degree)
-    print(tX_newfeat.shape)
+    print('Shape of generated features: ', tX_newfeat.shape)
 
     seed = 1
     k_fold = 4
@@ -17,13 +17,14 @@ def learning(tX, y, degree, lambda_):
     best_loss = 999
 
     for j, lambda_i in enumerate(lambda_):
-        print(lambda_i)
+        print('Current lanbda tested: ', lambda_i)
 
         rmse_tr_tmp = []
         rmse_te_tmp = []
 
         # cross-validation
         for k in range(k_fold):
+            print('Pass number ', k)
             loss_tr, loss_te,_ = cross_validation(y, tX_newfeat, k_indices, k, lambda_i)
             rmse_te_tmp.append(loss_te)
             rmse_tr_tmp.append(loss_tr)

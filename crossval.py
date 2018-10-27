@@ -1,4 +1,5 @@
 from proj1_helpers import *
+from implementation import ridge_regression
 
 def cross_validation(y, x, k_indices, k, lambda_):
     """return the loss of ridge regression."""
@@ -16,6 +17,7 @@ def cross_validation(y, x, k_indices, k, lambda_):
     score_table = []
 
     # ridge regression
+    print('Ridge inside cross val started')
     weights, loss = ridge_regression(y_tr, x_tr, lambda_)
 
     y_te_predict = predict_labels(weights, x_te)

@@ -1,7 +1,6 @@
 import numpy as np
 from personal_helpers import *
 from proj1_helpers import *
-import matplotlib.pyplot as plt
 
 def least_squares(y, tx):
 

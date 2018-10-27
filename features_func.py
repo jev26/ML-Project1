@@ -27,7 +27,6 @@ def polynomial_features(X, degree):
 
     #use that iterator to get the total number of features of the output
     nb_output = sum(1 for _ in combi)
-    print(nb_output)
 
     #initiate an empty array for the output
     PF = np.empty([nb_samples, nb_output])
@@ -38,7 +37,6 @@ def polynomial_features(X, degree):
 
     #create the polynomial features by iterating and multipliying the columns
     for a, b in enumerate(combi):
-        print(b)
         PF[:, a] = X[:, b].prod(1)
 
     return PF
@@ -67,16 +65,8 @@ def generate_features(tX, degree):
     tanh_tX = tanh_feature(tX)
     sig_tX = sigmoid_feature(tX)
 
-    print(tX)
-    print(log_tX)
-
     tX = normalize(np.hstack([tX, log_tX, tanh_tX, sig_tX]))
-    print('shape generated features')
-    print(tX.shape)
 
     tX_final = polynomial_features(tX, degree)
-
-    print('txfinal')
-    print(tX_final)
 
     return tX_final
