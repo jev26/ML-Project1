@@ -53,8 +53,10 @@ for i, model_i in enumerate(all_model):
     tX_newfeat = generate_features(model_i['tX_tr'], degree)
     w,_ = ridge_regression(model_i['y_tr'], tX_newfeat, best_param[i])
 
+    tX_te_newfeat = generate_features(model_i['tX_te'], degree)
 
-    pred = predict_labels(w, tX_newfeat)
+    pred = predict_labels(w, tX_te_newfeat)
+
     ids_final = np.append(ids_final, model_i['te_id'])
     y_final = np.append(y_final, pred)
 
