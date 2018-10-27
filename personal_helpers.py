@@ -33,22 +33,6 @@ def batch_iter(y, tx, batch_size, num_batches=1, shuffle=True):
 
 
 
-## functions for cross-validation
-
-def build_k_indices(y, k_fold, seed):
-    """build k indices for k-fold."""
-    num_row = y.shape[0]
-    interval = int(num_row / k_fold)
-    np.random.seed(seed)
-    indices = np.random.permutation(num_row)
-    k_indices = [indices[k * interval: (k + 1) * interval]
-                 for k in range(k_fold)]
-    return np.array(k_indices)
-
-
-##other: TODO mettre de l'ordre
-
-
 def compute_mse(error):
     return (1 / (2 * np.size(error))) * np.sum(error * error)
 

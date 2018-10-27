@@ -24,11 +24,11 @@ model0, model1, model2 = preprocessing(complete_tX,complete_y,complete_ids)
 
 all_model = [model0, model1, model2]
 
-best_param = [0.0001,0.0001,0.0001]
+best_param = [1.8420699693267162e-08,5.179474679231202e-09,5.179474679231202e-09]
 
 
 
-degree = 2
+degree = 1
 
 y_final = []
 ids_final = []

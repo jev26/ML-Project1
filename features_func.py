@@ -66,5 +66,7 @@ def generate_features(tX, degree):
     sig_tX = sigmoid_feature(tX)
 
     tX = np.hstack([tX, log_tX, tanh_tX, sig_tX])
+    print('shape generated features')
+    print(tX.shape)
 
     return polynomial_features(tX, degree)
