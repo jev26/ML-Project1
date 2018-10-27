@@ -21,7 +21,7 @@ model0, model1, model2 = preprocessing(complete_tX,complete_y,complete_ids)
 
 all_model = [model0, model1, model2]
 
-best_param = [1.584893192461114e-07,2.5118864315095823e-07,5.179474679231202e-09]
+best_param = [1.584893192461114e-07,2.5118864315095823e-07,1e-07]
 degree = 2
 
 y_final = []
