@@ -21,7 +21,7 @@ model0, model1, model2 = preprocessing(complete_tX,complete_y,complete_ids)
 
 all_model = [model0, model1, model2]
 
-best_param = [1.584893192461114e-07,2.5118864315095823e-07,1e-07]
+best_param = [1.67683293681101e-07,2.2229964825261955e-07,1.2648552168552957e-07]
 degree = 2
 
 y_final = []
@@ -45,6 +45,7 @@ for i, model_i in enumerate(all_model):
 
     print('Generating features')
     tX_newfeat = generate_features(model_i['tX_tr'], degree)
+    print('Shape of new features', tX_newfeat.shape)
     print('Starting ridge regression')
     w,_ = ridge_regression(model_i['y_tr'], tX_newfeat, best_param[i])
 
