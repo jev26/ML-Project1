@@ -1,5 +1,6 @@
 import numpy as np
 from personal_helpers import *
+from proj1_helpers import *
 import matplotlib.pyplot as plt
 
 def least_squares(y, tx):
@@ -108,9 +109,14 @@ def cross_validation(y, x, k_indices, k, lambda_):
     x_tr = x[tr_indice]
     y_tr = y[tr_indice]
 
+    accuracy_table = []
 
     # ridge regression
     weights, loss = ridge_regression(y_tr, x_tr, lambda_)
+
+    y_te_predict = predict_labels(weights, x_te)
+    accuracy = (y_te_predict == y_te).mean()
+    accuracy_table.append(accuracy)
 
     # calculate the loss for train and test data
     e_tr = y_tr - x_tr.dot(weights)
@@ -119,4 +125,4 @@ def cross_validation(y, x, k_indices, k, lambda_):
     e_te = y_te - x_te.dot(weights)
     loss_te = np.sqrt(2 * compute_mse(e_te))
 
-    return loss_tr, loss_te
+    return loss_tr, loss_te, np.array(accuracy_table)

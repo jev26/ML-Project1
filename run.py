@@ -24,10 +24,18 @@ model0, model1, model2 = preprocessing(complete_tX,complete_y,complete_ids)
 
 all_model = [model0, model1, model2]
 
+best_param = [0.0001,0.0001,0.0001]
+
+
+
+degree = 2
+
 y_final = []
 ids_final = []
 
-for model_i in all_model:
+scores = []
+
+for i, model_i in enumerate(all_model):
     print(model_i['tX_tr'].shape)
     print(model_i['y_tr'].shape)
     print(model_i['tX_te'].shape)
@@ -36,14 +44,17 @@ for model_i in all_model:
     nSample, nFeature = model_i['tX_tr'].shape
     #oneHistogram(range(0, nFeature), model_i['tX_tr'], model_i['y_tr'])
 
-    print('start learning')
-    best_parameter = learning(model_i['tX_tr'], model_i['y_tr']) #ou model_i['best_param']
-    model_i.update({'best_param': best_parameter})
-    print('learning done')
-    w,_ = ridge_regression(model_i['y_tr'], model_i['tX_tr'], best_parameter[2])
-    print('ridge regression')
+    #print('start learning')
+    #best_parameter = learning(model_i['tX_tr'], model_i['y_tr'], degree) #ou model_i['best_param']
+    #model_i.update({'best_param': best_parameter})
+    #print('learning done')
 
-    pred = predict_labels(w, model_i['tX_te'])
+    print('ridge regression')
+    tX_newfeat = generate_features(model_i['tX_tr'], degree)
+    w,_ = ridge_regression(model_i['y_tr'], tX_newfeat, best_param[i])
+
+
+    pred = predict_labels(w, tX_newfeat)
     ids_final = np.append(ids_final, model_i['te_id'])
     y_final = np.append(y_final, pred)
 
@@ -52,5 +63,5 @@ print('creating submission')
 create_csv_submission(ids_final, y_final, "final_submission.csv")
 
 # print best parameter for each model
-for model_i in all_model:
-    print(model_i['best_param'])
+#for model_i in all_model:
+#    print(model_i['best_param'])
