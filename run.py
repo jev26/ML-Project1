@@ -1,6 +1,7 @@
 from Visualization import *
 from data_preproc import preprocessing
 from features_func import generate_features
+from Learning import learning
 
 train_path = 'data/train.csv'
 y, tX, ids = load_csv_data(train_path, sub_sample=False)
@@ -21,8 +22,9 @@ model0, model1, model2 = preprocessing(complete_tX,complete_y,complete_ids)
 
 all_model = [model0, model1, model2]
 
-best_param = [1.584893192461114e-07,2.5118864315095823e-07,1e-07]
-degree = 2
+#best_param = [1.584893192461114e-07,2.5118864315095823e-07,1e-07]
+degree = 1
+lambda_ = np.logspace(-10, 1, 20)
 
 y_final = []
 ids_final = []
@@ -38,18 +40,25 @@ for i, model_i in enumerate(all_model):
     nSample, nFeature = model_i['tX_tr'].shape
     #oneHistogram(range(0, nFeature), model_i['tX_tr'], model_i['y_tr'])
 
-    #print('start learning')
-    #best_parameter = learning(model_i['tX_tr'], model_i['y_tr'], degree) #ou model_i['best_param']
-    #model_i.update({'best_param': best_parameter})
-    #print('learning done')
-
     print('Generating features')
     tX_newfeat = generate_features(model_i['tX_tr'], degree)
+
+    print('start learning')
+    best_parameter, losses_tr, losses_te,best_loss, std_te, accuracy_mean, accuracy_std = learning(tX_newfeat, model_i['y_tr'], degree,lambda_) #ou model_i['best_param']
+    model_i.update({'best_param': best_parameter})
+    model_i.update({'losses_tr': losses_tr})
+    model_i.update({'losses_te': losses_te})
+    model_i.update({'best_loss': best_loss})
+    model_i.update({'std_te': std_te})
+    model_i.update({'accuracy_mean': accuracy_mean})
+    model_i.update({'accuracy_std': accuracy_std})
+    #print('learning done')
+
     print('Starting ridge regression')
-    w,_ = ridge_regression(model_i['y_tr'], tX_newfeat, best_param[i])
+    w,_ = ridge_regression(model_i['y_tr'], tX_newfeat, best_parameter)
+    #w,_ = ridge_regression(model_i['y_tr'], tX_newfeat, best_param[i])
 
     tX_te_newfeat = generate_features(model_i['tX_te'], degree)
-
     pred = predict_labels(w, tX_te_newfeat)
 
     ids_final = np.append(ids_final, model_i['te_id'])
@@ -61,5 +70,11 @@ print('Creating submission')
 create_csv_submission(ids_final, y_final, "final_submission.csv")
 
 # print best parameter for each model
-#for model_i in all_model:
-#    print(model_i['best_param'])
+plt.figure()
+for i, model_i in enumerate(all_model):
+    plt.subplot(3, 1, i + 1)
+    print('Best param: ', model_i['best_param'])
+    plotError(model_i['losses_tr'], model_i['losses_te'], lambda_)
+    print('losses_te ', model_i['best_loss'], ' +/- ', model_i['std_te'])
+    print('accuracy ', model_i['accuracy_mean'], ' +/- ', model_i['accuracy_std'])
+plt.show()

@@ -112,3 +112,12 @@ def lambdaStudy(damagedFeature0, tX, y, lambda_, degree): # for each feature, di
         plt.title('Feature n° ' + str(iFeature))
         plt.show()
 
+def plotError(losses_tr, loss_te,lambda_):
+    plt.semilogx(lambda_, losses_tr, marker=".", color='b', label='train error')
+    plt.semilogx(lambda_, loss_te, marker=".", color='r', label='test error')
+    plt.xlabel("lambda")
+    plt.ylabel("rmse")
+    plt.title("cross validation")
+    plt.legend(loc=2)
+    plt.grid(True)
+    #plt.show()

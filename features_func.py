@@ -65,7 +65,8 @@ def generate_features(tX, degree):
     tanh_tX = tanh_feature(tX)
     sig_tX = sigmoid_feature(tX)
 
-    tX = normalize(np.hstack([tX, log_tX, tanh_tX, sig_tX]))
+    tX = np.hstack([tX, log_tX, tanh_tX, sig_tX])
+    #tX = normalize(np.hstack([tX, log_tX, tanh_tX, sig_tX]))
 
     tX_final = polynomial_features(tX, degree)
 
