@@ -55,6 +55,9 @@ def sigmoid_feature(tX):
     tX = sigmoid((tX-np.mean(tX,axis=0)))
     return tX
 
+def square_root_feature(tX):
+    tX = np.sqrt(np.abs(tX))
+    return tX
 
 
 
@@ -64,9 +67,12 @@ def generate_features(tX, degree):
     log_tX = log_feature(tX)
     tanh_tX = tanh_feature(tX)
     sig_tX = sigmoid_feature(tX)
+    sqrt_tX = square_root_feature(tX)
 
-    tX = np.hstack([tX, log_tX, tanh_tX, sig_tX])
-    #tX = normalize(np.hstack([tX, log_tX, tanh_tX, sig_tX]))
+
+
+    #tX = np.hstack([tX, log_tX, tanh_tX, sig_tX])
+    tX = normalize(np.hstack([tX, log_tX, tanh_tX, sig_tX, sqrt_tX]))
 
     tX_final = polynomial_features(tX, degree)
 
