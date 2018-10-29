@@ -8,13 +8,8 @@ def standardize(x):
     return stdi
 
 
-def normalize(x, high=1.0, low=0.0):
-    mins = np.min(x, axis=0)
-    maxs = np.max(x, axis=0)
-    rng = maxs - mins
-    return high - (((high - low) * (maxs - x)) / rng)
-
 def data_cleaning(tX, y, imputation = True, outlier_removal = True):
+    """Clean the data set"""
 
     tX_return = tX
     y_return = y
@@ -48,7 +43,7 @@ def data_cleaning(tX, y, imputation = True, outlier_removal = True):
     return tX_return, y_return
 
 def preprocessing(complete_tX,complete_y,complete_ids):
-
+    """Split the data set regarding to the value of feature PRI_jet_num"""
     for Nbrjet in range(3):
 
         if Nbrjet == 2:

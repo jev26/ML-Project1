@@ -1,6 +1,5 @@
 from proj1_helpers import *
-from implementation import ridge_regression
-from features_func import generate_features
+from implementation import *
 
 def cross_validation(y, x, k_indices, k, lambda_):
     """return the loss of ridge regression."""

@@ -1,7 +1,8 @@
 from crossval import *
 from features_func import *
 
-def learning(tX, y, degree, lambda_):
+def learning(tX, y, lambda_):
+    """Function used to find the best parameters of a model"""
     losses_te = []
     std_te = []
     losses_tr = []

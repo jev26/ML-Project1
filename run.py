@@ -1,7 +1,9 @@
-from Visualization import *
+from proj1_helpers import *
+from implementation import *
+#from Visualization import *
 from data_preproc import preprocessing
 from features_func import generate_features
-from Learning import learning
+#from Learning import learning
 
 train_path = 'data/train.csv'
 y, tX, ids = load_csv_data(train_path, sub_sample=False)
@@ -16,15 +18,15 @@ complete_tX = np.vstack((tX,tX_te))
 complete_y = np.append(y,y_te)
 complete_ids = np.append(ids,ids_te)
 
-print('Proprocessing of data')
+print('Preprocessing of data')
 
 model0, model1, model2 = preprocessing(complete_tX,complete_y,complete_ids)
 
 all_model = [model0, model1, model2]
 
-#best_param = [1.67683293681101e-07,2.2229964825261955e-07,1.2648552168552957e-07]
-degree = 2
-lambda_ = np.logspace(-10, 1, 20)
+best_param = [3.5938136638046256e-05,3.5938136638046256e-05,0.0001]  #Values of lambdas corresponding to best model
+degree = 2                                                           #degree of polynomial feature expansion
+#lambda_ = np.logspace(-10, 1, 20) #used for the learning
 
 y_final = []
 ids_final = []
@@ -44,8 +46,9 @@ for i, model_i in enumerate(all_model):
     tX_newfeat = generate_features(model_i['tX_tr'], degree)
     print('Shape of new features', tX_newfeat.shape)
 
+    """ Learning using cross validation
     print('start learning')
-    best_parameter, losses_tr, losses_te,best_loss, std_te, accuracy_mean, accuracy_std = learning(tX_newfeat, model_i['y_tr'], degree,lambda_) #ou model_i['best_param']
+    best_parameter, losses_tr, losses_te,best_loss, std_te, accuracy_mean, accuracy_std = learning(tX_newfeat, model_i['y_tr'],lambda_) #ou model_i['best_param']
     model_i.update({'best_param': best_parameter})
     model_i.update({'losses_tr': losses_tr})
     model_i.update({'losses_te': losses_te})
@@ -54,13 +57,14 @@ for i, model_i in enumerate(all_model):
     model_i.update({'accuracy_mean': accuracy_mean})
     model_i.update({'accuracy_std': accuracy_std})
     #print('learning done')
+    """
 
-    print('Starting ridge regression')
-    w,_ = ridge_regression(model_i['y_tr'], tX_newfeat, best_parameter)
-    #w,_ = ridge_regression(model_i['y_tr'], tX_newfeat, best_param[i])
+    print('Starting ridge regression ', i)
+    #w,_ = ridge_regression(model_i['y_tr'], tX_newfeat, best_parameter) #uncomment if learning
+    w,_ = ridge_regression(model_i['y_tr'], tX_newfeat, best_param[i])
 
-    tX_te_newfeat = generate_features(model_i['tX_te'], degree)
-    pred = predict_labels(w, tX_te_newfeat)
+    print('Predicting labels...')
+    pred = predict_labels(w, generate_features(model_i['tX_te'], degree))
 
     ids_final = np.append(ids_final, model_i['te_id'])
     y_final = np.append(y_final, pred)
@@ -70,6 +74,7 @@ print('Creating submission')
 
 create_csv_submission(ids_final, y_final, "final_submission.csv")
 
+"""
 # print best parameter for each model
 plt.figure()
 for i, model_i in enumerate(all_model):
@@ -79,3 +84,4 @@ for i, model_i in enumerate(all_model):
     print('losses_te ', model_i['best_loss'], ' +/- ', model_i['std_te'])
     print('accuracy ', model_i['accuracy_mean'], ' +/- ', model_i['accuracy_std'])
 plt.show()
+"""

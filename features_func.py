@@ -1,8 +1,9 @@
-import numpy as np
 import itertools
 from data_preproc import *
-from personal_helpers import sigmoid
+from implementation import sigmoid
 
+
+#Functions used for feature engineering
 
 def build_poly(x, degree):
     """polynomial basis functions for input data x, for j=0 up to j=degree."""
@@ -42,26 +43,31 @@ def polynomial_features(X, degree):
     return PF
 
 def log_feature(tX):
+    """creates a matrix where the log of all the features is applied"""
     for i in range(tX.shape[1]):
         tX[:,i] = np.log(tX[:,i] - min(tX[:,i]) + 1)
     return tX
 
 def tanh_feature(tX):
+    """creates a matrix where the tanh of all the features is applied"""
     tX = np.tanh(tX)
     return tX
 
 
 def sigmoid_feature(tX):
+    """creates a matrix where the sigmoid of all the features is applied"""
     tX = sigmoid((tX-np.mean(tX,axis=0)))
     return tX
 
 def square_root_feature(tX):
+    """creates a matrix where the square root of all the (absolute value of) features is applied"""
     tX = np.sqrt(np.abs(tX))
     return tX
 
 
 
 def generate_features(tX, degree):
+    """Combines all the functions above and return a matrix with all the generated features"""
 
     tX = tX[:, np.apply_along_axis(np.count_nonzero, 0, tX) > 0] #remove features containing only 0
     log_tX = log_feature(tX)
@@ -69,10 +75,7 @@ def generate_features(tX, degree):
     sig_tX = sigmoid_feature(tX)
     sqrt_tX = square_root_feature(tX)
 
-
-
-    #tX = np.hstack([tX, log_tX, tanh_tX, sig_tX])
-    tX = normalize(np.hstack([tX, log_tX, tanh_tX, sig_tX, sqrt_tX]))
+    tX = standardize(np.hstack([tX, log_tX, tanh_tX, sig_tX, sqrt_tX])) #combines all the features together and normalize them
 
     tX_final = polynomial_features(tX, degree)
 
