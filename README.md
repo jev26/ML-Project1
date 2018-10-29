@@ -7,3 +7,8 @@
 python run.py
 ```
 4. A final_submission.csv file is created upon completion
+
+
+# Jupyter notebooks for learning and cross validation
+
+In addition, two jupyter notebooks were created for us to run the learning and the cross validation more easily. However, these processes are very time and resource consuming.
